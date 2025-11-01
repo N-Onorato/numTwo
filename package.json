@@ -1,6 +1,6 @@
 {
   "name": "@cytoplum/numtwo",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Framework-agnostic database infrastructure with schema management, migrations, and transaction support - flexible like a #2 pencil",
   "type": "module",
   "main": "./dist/index.js",
@@ -34,7 +34,7 @@
     "url": "https://github.com/N-Onorato/numTwo.git"
   },
   "dependencies": {
-    "better-sqlite3": "^11.0.0",
+    "better-sqlite3": "^12.4.1",
     "nanoid": "^5.0.0",
     "yaml": "^2.3.4"
   },
