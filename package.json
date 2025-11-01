@@ -13,7 +13,7 @@
     "./deno": "./src/index.deno.ts"
   },
   "bin": {
-    "numtwo-migrate": "./cli/migrate.ts"
+    "numtwo-migrate": "./dist/cli/migrate.js"
   },
   "scripts": {
     "build": "tsc",
@@ -29,6 +29,10 @@
   ],
   "author": "",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/N-Onorato/numTwo.git"
+  },
   "dependencies": {
     "better-sqlite3": "^11.0.0",
     "nanoid": "^5.0.0",
@@ -41,5 +45,12 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "files": [
+    "dist",
+    "cli",
+    "src",
+    "README.md",
+    "deno.json"
+  ]
 }

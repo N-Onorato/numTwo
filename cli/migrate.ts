@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { parse as parseYaml } from "yaml";
-import { DatabaseManager } from "../dist/DatabaseManager.js";
-import { createNodeDatabase } from "../dist/adapters/node/NodeDatabase.js";
-import { createNodeFileSystem } from "../dist/adapters/node/NodeFileSystem.js";
+import { DatabaseManager } from "../src/DatabaseManager.js";
+import { createNodeDatabase } from "../src/adapters/node/NodeDatabase.js";
+import { createNodeFileSystem } from "../src/adapters/node/NodeFileSystem.js";
 
 /**
  * Migration CLI for Node.js

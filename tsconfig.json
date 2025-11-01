@@ -5,7 +5,7 @@
     "moduleResolution": "NodeNext",
     "lib": ["ES2022"],
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -15,6 +15,6 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.deno.ts", "src/adapters/deno/**/*"]
+  "include": ["src/**/*", "cli/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.deno.ts", "src/adapters/deno/**/*", "cli/**/*.deno.ts"]
 }
