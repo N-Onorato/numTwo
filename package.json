@@ -1,5 +1,5 @@
 {
-  "name": "numtwo",
+  "name": "@cytoplum/numtwo",
   "version": "0.1.0",
   "description": "Framework-agnostic database infrastructure with schema management, migrations, and transaction support - flexible like a #2 pencil",
   "type": "module",
