@@ -1,0 +1,42 @@
+{
+  "name": "numtwo",
+  "version": "0.1.0",
+  "description": "Framework-agnostic database infrastructure with schema management, migrations, and transaction support - flexible like a #2 pencil",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./deno": "./src/index.deno.ts"
+  },
+  "bin": {
+    "numtwo-migrate": "./cli/migrate.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "migrate": "node ./cli/migrate.ts"
+  },
+  "keywords": [
+    "sqlite",
+    "database",
+    "migrations",
+    "schema",
+    "deno",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "better-sqlite3": "^11.0.0",
+    "nanoid": "^5.0.0",
+    "yaml": "^2.3.4"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.9",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  }
+}

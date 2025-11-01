@@ -1,0 +1,20 @@
+{
+  "name": "numtwo",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./src/index.deno.ts"
+  },
+  "tasks": {
+    "migrate": "deno run -A ./cli/migrate.deno.ts",
+    "migrate:status": "deno run -A ./cli/migrate.deno.ts status"
+  },
+  "imports": {
+    "@db/sqlite3": "https://deno.land/x/sqlite3@0.12.0/mod.ts",
+    "@std/yaml": "https://deno.land/std@0.216.0/yaml/mod.ts",
+    "nanoid": "https://deno.land/x/nanoid@v3.0.0/mod.ts"
+  },
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["deno.window", "dom"]
+  }
+}
