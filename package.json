@@ -1,6 +1,6 @@
 {
   "name": "@cytoplum/numtwo",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Framework-agnostic database infrastructure with schema management, migrations, and transaction support - flexible like a #2 pencil",
   "type": "module",
   "main": "./dist/index.js",
@@ -42,6 +42,9 @@
     "@types/better-sqlite3": "^7.6.9",
     "@types/node": "^20.11.0",
     "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "publishConfig": {
     "access": "public"
