@@ -6,8 +6,8 @@ export interface Migration {
   name: string;
   description: string;
   reversible: boolean;
-  up: string;
-  down: string | null;
+  up: string | { file: string };
+  down: string | { file: string } | null;
 }
 
 export interface MigrationsFile {
@@ -64,6 +64,70 @@ export class MigrationManager {
   }
 
   /**
+   * Resolves SQL content from either inline string or file reference
+   */
+  private async resolveSql(
+    sql: string | { file: string } | null,
+    migrationVersion: number,
+    direction: "up" | "down"
+  ): Promise<string | null> {
+    if (sql === null) {
+      return null;
+    }
+
+    if (typeof sql === "string") {
+      // Inline SQL - return as is
+      return sql;
+    }
+
+    // File reference - read from file
+    try {
+      const filePath = sql.file;
+      const content = await this.fs.readTextFile(filePath);
+      return content;
+    } catch (error) {
+      throw new Error(
+        `Failed to load SQL file for migration ${migrationVersion} (${direction}): ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+    }
+  }
+
+  /**
+   * Validates that all file references in migrations exist
+   */
+  private async validateMigrationFiles(migrations: Migration[]): Promise<void> {
+    for (const migration of migrations) {
+      // Check up file reference
+      if (typeof migration.up === "object" && migration.up.file) {
+        try {
+          await this.fs.readTextFile(migration.up.file);
+        } catch (error) {
+          throw new Error(
+            `Migration ${migration.version} (${migration.name}): up file not found: ${migration.up.file}`
+          );
+        }
+      }
+
+      // Check down file reference
+      if (
+        migration.down &&
+        typeof migration.down === "object" &&
+        migration.down.file
+      ) {
+        try {
+          await this.fs.readTextFile(migration.down.file);
+        } catch (error) {
+          throw new Error(
+            `Migration ${migration.version} (${migration.name}): down file not found: ${migration.down.file}`
+          );
+        }
+      }
+    }
+  }
+
+  /**
    * Loads migrations from the YAML file
    */
   private async loadMigrations(): Promise<Migration[]> {
@@ -86,6 +150,9 @@ export class MigrationManager {
           );
         }
       }
+
+      // Validate that all referenced files exist
+      await this.validateMigrationFiles(migrations);
 
       return migrations;
     } catch (error) {
@@ -131,10 +198,10 @@ export class MigrationManager {
 
     if (currentVersion < actualTarget) {
       // Run forward migrations
-      this.migrateUp(currentVersion, actualTarget, migrations);
+      await this.migrateUp(currentVersion, actualTarget, migrations);
     } else {
       // Run rollback migrations
-      this.migrateDown(currentVersion, actualTarget, migrations);
+      await this.migrateDown(currentVersion, actualTarget, migrations);
     }
 
     console.log(
@@ -145,11 +212,11 @@ export class MigrationManager {
   /**
    * Runs forward migrations from current to target version
    */
-  private migrateUp(
+  private async migrateUp(
     currentVersion: number,
     targetVersion: number,
     migrations: Migration[]
-  ): void {
+  ): Promise<void> {
     console.log(
       `Running forward migrations from version ${currentVersion} to ${targetVersion}`
     );
@@ -163,10 +230,16 @@ export class MigrationManager {
       console.log(`Applying migration ${version}: ${migration.name}`);
 
       try {
+        // Resolve SQL content (inline or from file)
+        const upSql = await this.resolveSql(migration.up, version, "up");
+        if (!upSql) {
+          throw new Error(`Migration ${version} has no up SQL defined`);
+        }
+
         // Execute migration in a transaction
         this.db.transaction(() => {
           // Execute migration
-          this.db.exec(migration.up);
+          this.db.exec(upSql);
 
           // Record migration as applied
           this.db
@@ -195,11 +268,11 @@ export class MigrationManager {
   /**
    * Runs rollback migrations from current to target version
    */
-  private migrateDown(
+  private async migrateDown(
     currentVersion: number,
     targetVersion: number,
     migrations: Migration[]
-  ): void {
+  ): Promise<void> {
     console.log(
       `Running rollback migrations from version ${currentVersion} to ${targetVersion}`
     );
@@ -225,10 +298,16 @@ export class MigrationManager {
       console.log(`Rolling back migration ${version}: ${migration.name}`);
 
       try {
+        // Resolve SQL content (inline or from file)
+        const downSql = await this.resolveSql(migration.down, version, "down");
+        if (!downSql) {
+          throw new Error(`Migration ${version} has no down SQL defined`);
+        }
+
         // Execute rollback in a transaction
         this.db.transaction(() => {
           // Execute rollback
-          this.db.exec(migration.down!);
+          this.db.exec(downSql);
 
           // Remove migration record
           this.db

@@ -170,7 +170,9 @@ manager.applySchema(schema);
 
 ### Creating Migrations
 
-Create a `migrations.yaml` file:
+Create a `migrations.yaml` file. You can use either inline SQL or file references:
+
+**Inline SQL (recommended for small migrations):**
 
 ```yaml
 migrations:
@@ -197,6 +199,44 @@ migrations:
     down: |
       ALTER TABLE users DROP COLUMN preferences;
 ```
+
+**File References (recommended for large migrations):**
+
+```yaml
+migrations:
+  - version: 3
+    name: "Create complex schema"
+    description: "Add products, orders, and inventory tables"
+    reversible: true
+    up:
+      file: "migrations/003_create_complex_schema_up.sql"
+    down:
+      file: "migrations/003_create_complex_schema_down.sql"
+```
+
+**Mixed Approach:**
+
+You can also mix inline SQL and file references in the same migrations.yaml:
+
+```yaml
+migrations:
+  - version: 1
+    name: "Create users table"
+    reversible: true
+    up: |
+      CREATE TABLE users (id TEXT PRIMARY KEY, name TEXT);
+    down: |
+      DROP TABLE users;
+
+  - version: 2
+    name: "Seed initial data"
+    reversible: false
+    up:
+      file: "migrations/002_seed_data.sql"
+    down: null
+```
+
+All referenced SQL files are validated when migrations are loaded, ensuring they exist before any migration is executed.
 
 ### Running Migrations
 
